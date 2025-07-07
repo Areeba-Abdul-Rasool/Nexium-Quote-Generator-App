@@ -2,18 +2,17 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Clipboard, Heart, Volume2 , Check } from 'lucide-react';
+import { Clipboard, Heart, Volume2, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export default function QuoteCard({ quote }) {
   const [liked, setLiked] = useState(false);
   const [copied, setCopied] = useState(false);
 
-
   const handleCopy = () => {
     navigator.clipboard.writeText(quote.text);
     setCopied(true);
-    setTimeout(() => setCopied(false), 2000); 
+    setTimeout(() => setCopied(false), 2000);
   };
 
   const handleSpeak = () => {
@@ -24,40 +23,36 @@ export default function QuoteCard({ quote }) {
 
   return (
     <motion.div
-      className="bg-base-100 border border-base-300 rounded-xl p-5 shadow-md hover:shadow-xl transition-all duration-300"
+      className="bg-white border border-gray-300 rounded-xl p-5 shadow-md hover:shadow-xl transition-all duration-300"
       whileHover={{ scale: 1.03 }}
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.5, ease: "easeOut", type: "spring" }}
+      transition={{ duration: 0.5, ease: 'easeOut', type: 'spring' }}
     >
-      <p
-        className={`text-lg font-medium ${
-          quote.language.toLowerCase() === 'urdu' ? 'text-right font-urdu' : '' }`} >
-        {quote.text}
+      <p className={`text-lg font-medium ${quote.language.toLowerCase() === 'urdu' ? 'text-right font-urdu' : ''}`}>
+        “{quote.text}”
       </p>
 
       <div className="flex justify-between items-center mt-4">
-        <div className="text-sm text-muted-foreground space-x-2">
-          <span className="badge badge-outline">Category :</span>
-              <span>{quote.category}</span>
+        <div className="flex items-center gap-2 text-sm text-gray-500">
+          <span className="badge badge-outline badge-neutral">{quote.category}</span>
+          <span className="badge badge-ghost">{quote.language}</span>
         </div>
 
-        <div className="flex space-x-2">
+        <div className="flex gap-2">
           <Button
             size="icon"
             variant="ghost"
             onClick={() => setLiked(!liked)}
-            className={liked ? 'text-red-500' : 'text-muted-foreground'}
+            className={`hover:scale-110 transition ${liked ? 'text-red-500' : 'text-gray-400'}`}
             title="Like"
           >
             <Heart fill={liked ? 'currentColor' : 'none'} />
           </Button>
 
           <Button size="icon" variant="ghost" onClick={handleCopy} title="Copy">
-            {copied ? (
-                 <Check className="text-green-500" />
-                 ) : ( <Clipboard /> )}
-            </Button>
+            {copied ? <Check className="text-green-500" /> : <Clipboard />}
+          </Button>
 
           <Button size="icon" variant="ghost" onClick={handleSpeak} title="Speak">
             <Volume2 />
