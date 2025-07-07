@@ -1,6 +1,6 @@
 'use client';
-
-import { useState } from 'react';
+ 
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Clipboard, Heart, Volume2, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -8,6 +8,14 @@ import { Button } from '@/components/ui/button';
 export default function QuoteCard({ quote }) {
   const [liked, setLiked] = useState(false);
   const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      window.speechSynthesis.onvoiceschanged = () => {
+        window.speechSynthesis.getVoices();
+      };
+    }
+  }, []);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(quote.text);
@@ -17,7 +25,24 @@ export default function QuoteCard({ quote }) {
 
   const handleSpeak = () => {
     const speakText = new SpeechSynthesisUtterance(quote.text);
-    speakText.lang = quote.language.toLowerCase() === 'urdu' ? 'ur-PK' : 'en-US';
+    const voices = window.speechSynthesis.getVoices();
+
+    const urduVoice = voices.find(
+      (voice) =>
+        voice.lang.toLowerCase().includes('ur') ||
+        voice.name.toLowerCase().includes('urdu')
+    );
+
+    if (quote.language.toLowerCase() === 'urdu' && urduVoice) {
+      speakText.voice = urduVoice;
+      speakText.lang = urduVoice.lang;
+    } else if (quote.language.toLowerCase() === 'urdu' && !urduVoice) {
+      alert('⚠️ Sorry, your browser does not support Urdu speech.');
+      return;
+    } else {
+      speakText.lang = 'en-US';
+    }
+
     speechSynthesis.speak(speakText);
   };
 
